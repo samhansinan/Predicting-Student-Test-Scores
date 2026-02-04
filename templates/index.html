@@ -5,94 +5,213 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-   <div class="container">
-        <div class="header">
-            <span class="ai-badge">🤖 AI Powered</span>
-            <h2>Student Score Predictor</h2>
-            <p>Enter student information to predict exam performance</p>
+ <div class="main-container">
+        <!-- LEFT SIDE: FORM -->
+        <div class="form-section">
+            <div class="header">
+               
+                <h1>Predicting Student Test Scores</h1>
+               
+            </div>
+
+           
+
+            <form method="POST" id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" min="17" max="24" step="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="study_hours">Study Hours (per day)</label>
+                        <input type="number" id="study_hours" name="study_hours" min="0" max="8" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="class_attendance">Class Attendance (%)</label>
+                        <input type="number" id="class_attendance" name="class_attendance" min="40" max="100" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sleep_hours">Sleep Hours (per day)</label>
+                        <input type="number" id="sleep_hours" name="sleep_hours" min="4" max="10" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course">Course</label>
+                        <select id="course" name="course" required>
+                            <option value="">Select course</option>
+                            <option value="b.sc">B.Sc</option>
+                            <option value="b.tech">B.Tech</option>
+                            <option value="ba">BA</option>
+                            <option value="bba">BBA</option>
+                            <option value="bca">BCA</option>
+                            <option value="mba">MBA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="internet_access">Internet Access</label>
+                        <select id="internet_access" name="internet_access" required>
+                            <option value="">Select option</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sleep_quality">Sleep Quality</label>
+                        <select id="sleep_quality" name="sleep_quality" required>
+                            <option value="">Select quality</option>
+                            <option value="poor">Poor</option>
+                            <option value="average">Average</option>
+                            <option value="good">Good</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="study_method">Study Method</label>
+                        <select id="study_method" name="study_method" required>
+                            <option value="">Select method</option>
+                            <option value="self-study">Self Study</option>
+                            <option value="coaching">Coaching</option>
+                            <option value="online videos">Online Videos</option>
+                            <option value="group study">Group Study</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="facility_rating">Facility Rating</label>
+                        <select id="facility_rating" name="facility_rating" required>
+                            <option value="">Select rating</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="exam_difficulty">Exam Difficulty</label>
+                        <select id="exam_difficulty" name="exam_difficulty" required>
+                            <option value="">Select difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    🎯 Predict Score
+                </button>
+
+                 <div class="action-buttons">
+                <button type="button" class="btn-autofill" onclick="autoFillForm()">
+                    🎲 Auto Fill Random Data
+                </button>
+                <button type="button" class="btn-reset" onclick="resetForm()">
+                    🔄 Reset
+                </button>
+            </div>
+            </form>
         </div>
 
-        <form method="POST">
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="number" id="age" name="age" placeholder="18" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="study_hours">Study Hours</label>
-                    <input type="number" id="study_hours" name="study_hours" placeholder="5" required>
-                </div>
+        <!-- RIGHT SIDE: RESULTS -->
+        <div class="results-section">
+            {% if prediction is none %}
+            <div class="empty-state">
+                
+                    <circle cx="100" cy="100" r="80" stroke="white" stroke-width="4" opacity="0.3"/>
+                    <circle cx="100" cy="100" r="60" stroke="white" stroke-width="4" opacity="0.5"/>
+                    <circle cx="100" cy="100" r="40" stroke="white" stroke-width="4" opacity="0.7"/>
+                    <circle cx="100" cy="100" r="20" fill="white" opacity="0.9"/>
+                </svg>
+                <h3>Awaiting Prediction</h3>
+                <p>Fill out the form and click predict to see results</p>
             </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="class_attendance">Class Attendance (%)</label>
-                    <input type="number" id="class_attendance" name="class_attendance" placeholder="85" required>
+            {% else %}
+            <div class="prediction-container">
+                <div class="prediction-header">
+                    <h2>Predicted Exam Score</h2>
                 </div>
 
-                <div class="form-group">
-                    <label for="sleep_hours">Sleep Hours</label>
-                    <input type="number" id="sleep_hours" name="sleep_hours" placeholder="7" required>
+                <div class="score-circle">
+                    <div class="score-value">{{ prediction }}</div>
                 </div>
+
+                <div class="score-label">out of 100</div>
+
+                {% if suggestions %}
+                <div class="suggestions-box">
+                    <h4>💡 Personalized Recommendations</h4>
+                    <ul>
+                    {% for suggestion in suggestions %}
+                        <li>{{ suggestion }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <input type="text" id="gender" name="gender" placeholder="Male/Female" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="course">Course</label>
-                    <input type="text" id="course" name="course" placeholder="Computer Science" required>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="internet_access">Internet Access</label>
-                    <input type="text" id="internet_access" name="internet_access" placeholder="yes/no" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="sleep_quality">Sleep Quality</label>
-                    <input type="text" id="sleep_quality" name="sleep_quality" placeholder="poor/average/good" required>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="study_method">Study Method</label>
-                    <input type="text" id="study_method" name="study_method" placeholder="Online/Offline" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="facility_rating">Facility Rating</label>
-                    <input type="text" id="facility_rating" name="facility_rating" placeholder="1-5" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="exam_difficulty">Exam Difficulty</label>
-                <input type="text" id="exam_difficulty" name="exam_difficulty" placeholder="Easy/Medium/Hard" required>
-            </div>
-
-            <button type="submit" class="submit-btn">Predict Score</button>
-        </form>
-
-        {% if prediction is not none %}
-        <div class="prediction-result">
-            <h3>Predicted Exam Score</h3>
-            <div class="prediction-score">{{ prediction }}</div>
+            {% endif %}
         </div>
-        <h4>Suggestions to Improve:</h4>
-            <ul>
-            {% for suggestion in suggestions %}
-                <li>{{ suggestion }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
     </div>
+
+    <script>
+        function autoFillForm() {
+            // Random number generators
+            const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            const randomFloat = (min, max, decimals = 1) => 
+                (Math.random() * (max - min) + min).toFixed(decimals);
+            const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+            // Fill with random data
+            document.getElementById('age').value = randomInt(17, 24);
+            document.getElementById('study_hours').value = randomFloat(0.5, 7.9, 1);
+            document.getElementById('class_attendance').value = randomFloat(40, 99, 1);
+            document.getElementById('sleep_hours').value = randomFloat(4.1, 9.9, 1);
+            
+            document.getElementById('gender').value = randomChoice(['male', 'female', 'other']);
+            document.getElementById('course').value = randomChoice(['b.sc', 'b.tech', 'ba', 'bba', 'bca', 'mba']);
+            document.getElementById('internet_access').value = randomChoice(['yes', 'no']);
+            document.getElementById('sleep_quality').value = randomChoice(['poor', 'average', 'good']);
+            document.getElementById('study_method').value = randomChoice(['self-study', 'coaching', 'online videos', 'group study', 'mixed']);
+            document.getElementById('facility_rating').value = randomChoice(['low', 'medium', 'high']);
+            document.getElementById('exam_difficulty').value = randomChoice(['easy', 'moderate', 'hard']);
+
+            // Add animation to show it's filled
+            document.querySelectorAll('input, select').forEach(el => {
+                el.style.animation = 'none';
+                setTimeout(() => {
+                    el.style.animation = 'pulse 0.5s ease';
+                }, 10);
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('predictionForm').reset();
+        }
+
+        // Add pulse animation to inputs when they change
+        document.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('change', function() {
+                this.style.borderColor = 'var(--success)';
+                setTimeout(() => {
+                    this.style.borderColor = '';
+                }, 500);
+            });
+        });
+    </script>
 </body>
 </html>
